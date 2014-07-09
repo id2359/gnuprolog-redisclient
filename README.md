@@ -1,22 +1,8 @@
-gnuprolog-redisclient
+swiprolog-redisclient
 =====================
-A simple but effective pure native GNU Prolog client connecting with Redis
+A simple but effective pure native SWI Prolog client connecting with Redis
 (min. 2.8), no other libraries required.
 
-What it does
-============
-Provides a 100% pure Prolog implementation for GNU Prolog that allows your code to connect to a Redis server, local or remote, and perform the large majority of commands allowing you to have the power of Redis for use in your application.
-
-Requirements
-============
-This has been written with GNU Prolog 1.4.4 and against Redis 2.8.0. It was developed on OSX Mavericks but should be fine anywhere you can get GNU Prolog to run.
-
-
-Limitations
-===========
-It doesn't support anything that requires blocking or a persistent connection to receive data (yet) that is to say, you couldn't use it for subscribing to a channel.
-
-If you want it to do something and it doesn't, get in touch and I will see what I can do. I already plan to refactor it soon to make it work with SWI Prolog as well, I mainly use GNU but SWI is pretty popular so I will make that happen when I can.
 
 Running the tests
 =================
@@ -24,7 +10,7 @@ I wrote a very simple unit testing framework for this. In the folder `tests` you
 
     ./runalltests
 
-which outputs a very simple trace of the tests. *Make sure Redis is running* before you start it. If it hangs then you will have to CTRL-C and then quit GNU Prolog and try again.
+which outputs a very simple trace of the tests. *Make sure Redis is running* before you start it. If it hangs then you will have to CTRL-C and then quit SWI Prolog and try again.
 
 The test framework is in `testing_framework.pl`  and is as simple as I could make it. Prolog is ideally suited for this and so as I got the hang of it I realised that I could rely on Unification more generally in my tests scripts and resort to using `tf_equals` only when a test failed and needed sorting out. Again, it's simple but effective and did the job.
 
@@ -57,11 +43,11 @@ First *ensure that Redis is running*, obvious I know but... I wrote this
 against 2.8 as I tend to stay with the latest of versions of things when I can
 to try out new features.
 
-Once Redis is running, you can then start a GNU Prolog session and load the code:
+Once Redis is running, you can then start a SWI Prolog session and load the code:
 
     Seans-iMac:gprolog-redis seancharles$ 
     Seans-iMac:gprolog-redis seancharles$ gprolog
-    GNU Prolog 1.4.4 (64 bits)
+    SWI Prolog 1.4.4 (64 bits)
     Compiled Oct 13 2013, 17:19:55 with cc
     By Daniel Diaz
     Copyright (C) 1999-2013 Daniel Diaz
@@ -102,9 +88,9 @@ Here are some more console mode examples:
 
 ```prolog
 | ?- redis(flushall).
-| ?- redis(set(test_string, 'GNU Prolog')).
+| ?- redis(set(test_string, 'SWI Prolog')).
 | ?- redis(append(test_string, ' is Cool')).
-| ?- redis(echo('GNU Prolog rocks!')).
+| ?- redis(echo('SWI Prolog rocks!')).
 | ?- redis(lpush(test_list, 42)).
 | ?- redis(llen(test_list)).
 | ?- redis(lrange(test_list, 0, -1)).
