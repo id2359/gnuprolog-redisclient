@@ -1,23 +1,14 @@
 /*
-    FILE: gpredis.pl
-    DATE: Nov 2013
-    DOES: Provides a simple Redis client for GNU Prolog using only Prolog
-    WHOM: Sean Charles  <sean at objitsu dot com>
-    
-    This program provides a simple Redis client. It does not allow for any
-    persistent connection behaviours so pub/sub etc is not possible (yet).
-    
-    All other commands are supported using a simple form whereby a functor
-    name makes the first part of the command and the arguments are then added
-    as the remaining Redis command.
-    
-    Please read the test scripts for full examples on how to use.
-   
-    BUGS/IDEAS: Please submit to the email address shown above.
-    
-    LICENCE: MIT, see the LICENCE file.
+    FILE: spredis.pl
+    DATE: July 2014
+    FORK OF: gpredis.pl GNU Prolog 
+    ORIGINALLY AUTHORED BY WHOM: Sean Charles  <sean at objitsu dot com>
+    ADAPTED TO: Swi Prolog
+    BY: frug
+    LICENCE: MIT
 */
 
+:- use_module(library(socket)).
 
 %%============================================================================
 %% Public predicates -- use these in your code.
@@ -27,15 +18,11 @@ redis_connect(Conn) :-
 	redis_connect(Conn, localhost, 6379).
 
 redis_connect(redis(SI, SO, S), Host, Port) :-
-	socket('AF_INET', S),
-	socket_connect(S, 'AF_INET'(Host, Port), SI, SO),
-	set_stream_type(SO, binary),
-	set_stream_type(SI, binary).
-
+	socket:tcp_socket(S),
+	socket:tcp_connect(S,Host:Port,SI,SO).
 
 redis_disconnect(redis(_, _, S)) :-
-	socket_close(S).
-
+	socket:tcp_close_socket(S).
 
 redis_do(redis(SI, SO, _), Req, Out) :-
 	gpredis_build_cmd(Req, CmdOut),
@@ -196,10 +183,10 @@ gpredis_build_cmd(Req, X) :-
 
 gpredis_cmdargs([], []).
 
-gpredis_cmdargs([Arg|Args], [ArgLen, "\r\n", X, "\r\n" | Output]) :-
+gpredis_cmdargs([Arg|Args], [ArgLen, '\r\n', X, '\r\n' | Output]) :-
 	gpredis_stringify(Arg, X),
 	length(X, XLen),
-	format_to_codes(ArgLen, "$~d", [XLen]),
+	format_to_codes(ArgLen, '$~d', [XLen]),
 	gpredis_cmdargs(Args, Output).
 
 
