@@ -200,7 +200,7 @@ gpredis_stringify(X,Y) :-
 
 gpredis_stringify(X,Y) :-
 	atom(X),
-	atom_codes(X,Y)
+	atom_codes(X,Y),
 	!.
 
 gpredis_stringify(X,Y) :-
