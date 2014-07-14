@@ -176,29 +176,34 @@ gpredis_build_cmd(Req, X) :-
 	Req =.. [Cmd|Args],
 	gpredis_cmdargs([Cmd|Args], Args2),
 	flatten(Args2, CmdData),
+	format('CmdData = ~s\n',CmdData),
 	length(Args, N),
 	NArgs is N+1,
-	format_to_codes(X, '*~d\r\n~s', [NArgs, CmdData]).
+	format('Number of args = ~d',NArgs),
+	format('Command = ~d~s',CmdData),
+	format_to_codes('*~d\r\n~d~s', [NArgs, CmdData],X).
 
 
 gpredis_cmdargs([], []).
 
-gpredis_cmdargs([Arg|Args], [ArgLen, '\r\n', X, '\r\n' | Output]) :-
+gpredis_cmdargs([Arg|Args], [ArgLen, '\r\n', [X], '\r\n' | Output]) :-
 	gpredis_stringify(Arg, X),
 	length(X, XLen),
-	format_to_codes(ArgLen, '$~d', [XLen]),
+	format_to_codes(XLen, '$~d', ArgLen),
 	gpredis_cmdargs(Args, Output).
 
 
 gpredis_stringify(X,Y) :-
 	is_list(X),
-	format_to_codes(Y, '~s', [X]),
+	format_to_codes(Y, '~s', X),
+	
 	!.
 
 gpredis_stringify(X,Y) :-
 	atom(X),
-	format_to_codes(Y, '~a', [X]),
+	atom_string(X,S),
+	gpredis_stringify(S,Y),
 	!.
 
 gpredis_stringify(X,Y) :-
-	format_to_codes(Y, '~w', [X]).
+	format_to_codes(X, '~w', Y).
