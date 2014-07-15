@@ -26,6 +26,7 @@ redis_disconnect(redis(_, _, S)) :-
 
 redis_do(redis(SI, SO, _), Req, Out) :-
 	gpredis_build_cmd(Req, CmdOut),
+	format(CmdOut),
 	gpredis_write(SO, CmdOut),
 	get_byte(SI, ReplyMode),
 	char_code(ReplyMode2, ReplyMode),
@@ -80,6 +81,7 @@ gpredis_write(SO, [B|Bytes]) :-
 
 gpredis_parse_reply(-, SI, Out) :-
 	gpredis_get_line(SI, [], Out),
+        format(Out),
 	format_to_atom(Err, '~s', [Out]),
 	throw(redis_error(Err)).
 
@@ -172,24 +174,22 @@ gpredis_wrap_as(Type, Value, Out) :-
 %% the above to pass through the current value as part of the outgoing
 %% command.
 
-gpredis_build_cmd(Req, X) :-
+gpredis_build_cmd(Req, Y) :-
 	Req =.. [Cmd|Args],
 	gpredis_cmdargs([Cmd|Args], Args2),
 	flatten(Args2, CmdData),
-	write(CmdData),
 	length(Args, N),
 	NArgs is N+1,
-	format('Number of args = ~d',NArgs),
-	format('Command = ~s',CmdData),
-	format_to_codes('*~d\r\n~s', [NArgs, CmdData],X).
+	format_to_codes('*~d\r\n~s', [NArgs, CmdData],Y).
 
 
 gpredis_cmdargs([], []).
 
-gpredis_cmdargs([Arg|Args], [ArgLen, '\r\n', [X], '\r\n' | Output]) :-
+gpredis_cmdargs([Arg|Args], [ArgLen,Sep, X, Sep | Output]) :-
+        format_to_codes('\r\n','~s',Sep),
 	gpredis_stringify(Arg, X),
 	length(X, XLen),
-	format_to_codes(XLen, '$~d', ArgLen),
+	format_to_codes(XLen,'$~d', ArgLen),
 	gpredis_cmdargs(Args, Output).
 
 
