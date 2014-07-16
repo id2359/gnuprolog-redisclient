@@ -26,7 +26,6 @@ redis_disconnect(redis(_, _, S)) :-
 
 redis_do(redis(SI, SO, _), Req, Out) :-
 	gpredis_build_cmd(Req, CmdOut),
-	format(CmdOut),
 	gpredis_write(SO, CmdOut),
 	get_byte(SI, ReplyMode),
 	char_code(ReplyMode2, ReplyMode),
