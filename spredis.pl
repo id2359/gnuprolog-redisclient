@@ -185,11 +185,12 @@ gpredis_build_cmd(Req, Y) :-
 
 gpredis_cmdargs([], []).
 
-gpredis_cmdargs([Arg|Args], [ArgLen,Sep, X, Sep | Output]) :-
+gpredis_cmdargs([Arg|Args], [Dollar,ArgLen,Sep, X, Sep | Output]) :-
         format_to_codes('\r\n','~s',Sep),
+	format_to_codes('$','~s',Dollar),
 	gpredis_stringify(Arg, X),
 	length(X, XLen),
-	format_to_codes(XLen,'$~d', ArgLen),
+	format_to_codes(XLen,'~d', ArgLen),
 	gpredis_cmdargs(Args, Output).
 
 
