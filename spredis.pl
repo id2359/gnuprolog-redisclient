@@ -41,6 +41,13 @@ redis(Req) :-
 	redis_print(Out).
 
 
+redis(Req,Value) :-
+	redis_connect(C),
+	redis_do(C, Req, Out),
+	Out =.. [bulk,Value],
+	redis_disconnect(C).
+
+
 redis_print([]) :- !.
 
 redis_print([number(X)|Xs]) :-
